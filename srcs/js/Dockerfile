@@ -1,10 +1,9 @@
-FROM node:14
+FROM debian:11
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json first (to leverage Docker's layer caching)
-COPY package*.json ./
+COPY hello.js ./
 
 # Install dependencies
 RUN npm install
@@ -13,4 +12,4 @@ RUN npm install
 COPY . .
 
 # Start the application
-CMD ["node", "app.js"]
+CMD ["node", "hello.js"]
