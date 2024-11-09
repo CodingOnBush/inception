@@ -1,14 +1,16 @@
-# Use Node.js 14 as the base image
 FROM node:14
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy the application code to the container
-COPY app.js .
+# Copy package.json first (to leverage Docker's layer caching)
+COPY package*.json ./
 
-# Expose the application port
-EXPOSE 3000
+# Install dependencies
+RUN npm install
 
-# Define the command to run the application
+# Copy application code
+COPY . .
+
+# Start the application
 CMD ["node", "app.js"]
