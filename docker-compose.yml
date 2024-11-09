@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  shell-service:
+    build:
+      context: ./srcs/sh
+    container_name: shell_service
+
+  js-service:
+    build:
+      context: ./srcs/js
+    container_name: js_service
