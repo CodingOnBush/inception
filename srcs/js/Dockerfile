@@ -6,7 +6,7 @@ WORKDIR /app
 COPY hello.js ./
 
 # Install dependencies
-RUN npm install
+RUN apt-get update && apt-get install -y nodejs npm
 
 # Copy application code
 COPY . .
