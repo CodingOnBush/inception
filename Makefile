@@ -15,6 +15,10 @@ stop:
 # Restart the containers
 restart: stop up
 
+# Print a list of running containers
+ps:
+	docker-compose -f $(COMPOSE) ps
+
 # Remove the containers and networks, without affecting volumes or images
 down:
 	docker-compose -f $(COMPOSE) down
