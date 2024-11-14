@@ -1,4 +1,4 @@
-COMPOSE=docker-compose.yml
+COMPOSE	:=	docker-compose.yml
 
 # Build the Docker images defined in docker-compose.yml
 build:
@@ -27,4 +27,4 @@ down:
 clean: down
 	docker system prune -f
 
-.PHONY: build up down stop restart clean
+.PHONY: build up down stop restart clean ps

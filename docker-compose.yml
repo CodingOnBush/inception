@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-	shell-service:
-		build:
-			context: ./srcs/sh
-		container_name: shell_service
+  shell-service:
+    build:
+      context: ./srcs/sh
+    container_name: shell_service
 
-	shell-service2:
-		build:
-			context: ./srcs/sh2
-		container_name: shell_service2
+  shell-service2:
+    build:
+      context: ./srcs/sh2
+    container_name: shell_service2
