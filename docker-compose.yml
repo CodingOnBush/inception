@@ -13,13 +13,14 @@ services:
       MYSQL_PASSWORD: wp_password
     networks:
       - my_network
-    restart: always
+    restart: on-failure
 
   wordpress:
-    build: ./srcs/wordpress
+    build: ./wordpress
     container_name: wordpress_container
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     volumes:
       - wordpress_files:/var/www/html
     environment:
@@ -29,7 +30,9 @@ services:
       WORDPRESS_DB_NAME: wordpress
     networks:
       - my_network
-    restart: always
+    restart: on-failure
+    expose:
+      - "9000"
 
   nginx:
     build: ./srcs/nginx
@@ -42,7 +45,7 @@ services:
       - wordpress
     networks:
       - my_network
-    restart: always
+    restart: on-failure
 
 volumes:
   mariadb_data:

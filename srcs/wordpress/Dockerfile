@@ -1,9 +1,9 @@
 # Utiliser une image de base Debian
 FROM debian:bullseye
 
-# Installer Apache, PHP, et les extensions nécessaires pour WordPress
+# Installer PHP, PHP-FPM, et les extensions nécessaires
 RUN apt-get update && \
-    apt-get install -y apache2 php libapache2-mod-php php-mysql wget tar && \
+    apt-get install -y php php-fpm php-mysql wget tar && \
     apt-get clean
 
 # Télécharger WordPress
@@ -13,8 +13,8 @@ RUN wget https://wordpress.org/latest.tar.gz && \
     chown -R www-data:www-data /var/www/html && \
     rm -rf latest.tar.gz wordpress
 
-# Exposer le port pour Apache
-EXPOSE 80
+# Exposer le port utilisé par PHP-FPM
+EXPOSE 9000
 
-# Commande par défaut pour démarrer Apache
-CMD ["apachectl", "-D", "FOREGROUND"]
+# Commande par défaut pour démarrer php-fpm
+CMD ["php-fpm", "-F"]

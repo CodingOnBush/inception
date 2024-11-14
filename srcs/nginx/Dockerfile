@@ -1,16 +1,10 @@
-# Utiliser une image de base Alpine
-FROM alpine:latest
+FROM debian:bullseye
 
-# Installer Nginx
-RUN apk update && \
-    apk add nginx && \
-    mkdir -p /run/nginx
+RUN apt-get update && apt-get install -y nginx && apt-get clean
 
-# Copier la configuration Nginx
 COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./ssl /etc/nginx/ssl
 
-# Exposer le port pour Nginx
 EXPOSE 443
 
-# Commande par défaut pour démarrer Nginx
 CMD ["nginx", "-g", "daemon off;"]

@@ -6,11 +6,8 @@ RUN apt-get update && \
     apt-get install -y mariadb-server && \
     apt-get clean
 
-# Copier les fichiers de configuration si nécessaire
-COPY ./my_custom_config.cnf /etc/mysql/conf.d/
-
-# Exposer le port pour MariaDB
+# Exposer le port 3306 pour la base de données
 EXPOSE 3306
 
-# Commande par défaut pour démarrer MariaDB
+# Démarrer MariaDB
 CMD ["mysqld"]
