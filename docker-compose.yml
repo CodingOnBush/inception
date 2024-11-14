@@ -1,12 +1,53 @@
 version: '3.8'
 
 services:
-  shell-service:
-    build:
-      context: ./srcs/sh
-    container_name: shell_service
+  mariadb:
+    build: ./srcs/mariadb
+    container_name: mariadb_container
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: your_root_password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wp_user
+      MYSQL_PASSWORD: wp_password
+    networks:
+      - my_network
+    restart: always
 
-  shell-service2:
-    build:
-      context: ./srcs/sh2
-    container_name: shell_service2
+  wordpress:
+    build: ./srcs/wordpress
+    container_name: wordpress_container
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress_files:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: wp_password
+      WORDPRESS_DB_NAME: wordpress
+    networks:
+      - my_network
+    restart: always
+
+  nginx:
+    build: ./srcs/nginx
+    container_name: nginx_container
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+    networks:
+      - my_network
+    restart: always
+
+volumes:
+  mariadb_data:
+  wordpress_files:
+
+networks:
+  my_network:
+    driver: bridge
