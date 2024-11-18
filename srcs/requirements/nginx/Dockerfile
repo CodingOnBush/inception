@@ -1,24 +1,22 @@
-# Utiliser l'avant-dernière version stable d'Alpine comme base
-FROM alpine:3.17
+FROM debian:bullseye
 
-# Installer nginx et openssl pour générer les certificats
-RUN apk update && apk add --no-cache nginx openssl
+# Installer NGINX
+RUN apt-get update -y && \
+	apt-get upgrade -y && \
+    apt-get install -y vim curl nginx openssl
 
-# Créer un répertoire pour les certificats SSL et générer un certificat auto-signé
-RUN mkdir -p /etc/nginx/ssl && \
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/nginx/ssl/nginx.key \
-    -out /etc/nginx/ssl/nginx.crt \
-    -subj "/C=FR/ST=Paris/L=Paris/O=42School/OU=IT Department/CN=login.42.fr"
+COPY conf/nginx.conf /etc/nginx/nginx.conf
+RUN mkdir -p /etc/nginx/ssl
 
-# Copier le fichier de configuration nginx
-COPY ./nginx.conf /etc/nginx/nginx.conf
+# SSL certificate 
+RUN openssl req \
+-x509 \
+-nodes \
+-out /etc/nginx/ssl/inception.crt \
+-keyout /etc/nginx/ssl/inception.key \
+-subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=allblue.42.fr/UID=allblue"
 
-# Créer les répertoires nécessaires
-RUN mkdir -p /run/nginx
+RUN chmod 644 /etc/nginx/ssl/inception.crt /etc/nginx/ssl/inception.key
+RUN chown -R www-data:www-data /var/www/html
 
-# Exposer le port 443 pour le trafic HTTPS
-EXPOSE 443
-
-# Définir la commande par défaut pour lancer nginx
 CMD ["nginx", "-g", "daemon off;"]
