@@ -1,4 +1,4 @@
-COMPOSE	:=	docker-compose.yml
+COMPOSE	:=	./srcs/docker-compose.yml
 
 # Build the Docker images defined in docker-compose.yml
 build:
