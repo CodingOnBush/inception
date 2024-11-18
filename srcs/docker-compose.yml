@@ -10,7 +10,7 @@ services:
     ports:
       - "443:443"
     networks:
-      - my_network
+      - egg_head
     volumes:
       - web:/var/www/html
     restart: always
@@ -24,13 +24,15 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
+    user:
+      "${UID}:${GID}"
     secrets:
       - db_password
       - db_root_password
     expose:
       - "3306"
     networks:
-      - my_network
+      - egg_head
     volumes:
       - mariadb:/var/lib/mysql
     restart: always
@@ -63,17 +65,17 @@ services:
     expose:
       - "9000"
     networks:
-      - my_network
+      - egg_head
     volumes:
       - web:/var/www/html
     restart: always
 
 # Secrets
 secrets:
-  db_password:
-    file: ../secrets/db_password.txt
   db_root_password:
     file: ../secrets/db_root_password.txt
+  db_password:
+    file: ../secrets/db_password.txt
   wp_admin_user_password:
     file: ../secrets/wp_admin_user_password.txt
   wp_user_password:
@@ -81,8 +83,8 @@ secrets:
 
 # Networks
 networks:
-  my_network:
-    name: my_network
+  egg_head:
+    name: egg_head
     driver: bridge
 
 # Volumes
@@ -94,12 +96,12 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /Users/allblue/data/web
+      device: ~/Desktop/data/web
       o: bind
   # MariaDB data
   mariadb:
     driver: local
     driver_opts:
       type: none
-      device: /Users/allblue/data/mariadb
+      device: ~/Desktop/data/mariadb
       o: bind

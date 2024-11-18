@@ -1,5 +1,5 @@
 # Base model
-FROM debian:11-slim
+FROM debian:bullseye
 
 # Install Packages
 

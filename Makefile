@@ -1,14 +1,10 @@
 COMPOSE			:=	./srcs/docker-compose.yml
 LOGIN			:=	allblue
-DATABASE_PATH	=	/Users/allblue/$(LOGIN)/data/mariadb
-WEB_PATH		=	/Users/allblue/$(LOGIN)/data/web
 
 all: build up
 
 # Build the Docker images defined in docker-compose.yml
 build:
-	mkdir -p $(DATABASE_PATH)
-	mkdir -p $(WEB_PATH)
 	docker-compose -f $(COMPOSE) build
 
 # Start the containers
