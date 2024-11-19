@@ -17,6 +17,7 @@ RUN	openssl req \
 	-subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=mos.42.fr/UID=mos"
 
 RUN chmod 644 /etc/nginx/ssl/inception.crt /etc/nginx/ssl/inception.key
+RUN chmod 755 /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 
 CMD ["nginx", "-g", "daemon off;"]
