@@ -2,9 +2,9 @@
 FROM debian:11-slim
 
 # Installer MariaDB
-RUN sudo apt-get update && \
-	sudo apt-get upgrade -y && \
-    sudo apt-get install -y mariadb-server
+RUN apt-get update && \
+	apt-get upgrade -y && \
+    apt-get install -y mariadb-server
 
 COPY conf/mariadb.conf	/etc/mysql/mariadb.conf.d/50-server.cnf
 
