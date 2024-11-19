@@ -3,7 +3,7 @@ FROM debian:bullseye
 # Installer NGINX
 RUN apt-get update -y && \
 	apt-get upgrade -y && \
-    apt-get install -y vim curl nginx openssl
+    apt-get install -y nginx openssl
 
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 RUN	mkdir -p /etc/nginx/ssl
@@ -18,5 +18,7 @@ RUN	openssl req \
 
 RUN chmod 644 /etc/nginx/ssl/inception.crt /etc/nginx/ssl/inception.key
 RUN chown -R www-data:www-data /var/www/html
+
+EXPOSE 443
 
 CMD ["nginx", "-g", "daemon off;"]
