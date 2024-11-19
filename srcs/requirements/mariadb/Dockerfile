@@ -1,5 +1,5 @@
 # Utiliser une image de base Debian
-FROM debian:11-slim
+FROM debian:bullseye
 
 # Installer MariaDB
 RUN apt-get update
