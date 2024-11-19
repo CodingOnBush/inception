@@ -1,107 +1,107 @@
 name: Inception
 
 services:
-	nginx:
-		container_name: nginx
-		depends_on:
-			- wordpress
-		build:
-			context: requirements/nginx
-		ports:
-			- "443:443"
-		networks:
-			- egg_head
-		volumes:
-			- web:/var/www/html
-		restart: always
+ nginx:
+  container_name: nginx
+  depends_on:
+   - wordpress
+  build:
+   context: requirements/nginx
+  ports:
+   - "443:443"
+  networks:
+   - egg_head
+  volumes:
+   - web:/var/www/html
+  restart: always
 
-	mariadb:
-		container_name: mariadb
-		build:
-			context: requirements/mariadb
-		environment:
-			MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
-			MYSQL_DATABASE: ${MYSQL_DATABASE}
-			MYSQL_USER: ${MYSQL_USER}
-			MYSQL_PASSWORD_FILE: /run/secrets/db_password
-		user:
-			"${UID}:${GID}"
-		secrets:
-			- db_password
-			- db_root_password
-		expose:
-			- "3306"
-		networks:
-			- egg_head
-		volumes:
-			- mariadb:/var/lib/mysql
-		restart: always
+ mariadb:
+  container_name: mariadb
+  build:
+   context: requirements/mariadb
+  environment:
+   MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+   MYSQL_DATABASE: ${MYSQL_DATABASE}
+   MYSQL_USER: ${MYSQL_USER}
+   MYSQL_PASSWORD_FILE: /run/secrets/db_password
+  user:
+   "${UID}:${GID}"
+  secrets:
+   - db_password
+   - db_root_password
+  expose:
+   - "3306"
+  networks:
+   - egg_head
+  volumes:
+   - mariadb:/var/lib/mysql
+  restart: always
 
-	wordpress:
-		container_name: wordpress
-		depends_on:
-			- mariadb
-		build:
-			context: requirements/wordpress
-		environment:
-			# Wordpress configuration
-			WORDPRESS_DB_HOST: mariadb:3306
-			WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
-			WORDPRESS_DB_USER: ${MYSQL_USER}
-			WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_password
-			WORDPRESS_URL: ${DOMAIN_NAME}
-			WORDPRESS_TITLE: ${WORDPRESS_TITLE}
-			# Wordpress user configuration
-			WORDPRESS_ADMIN_USER: ${WORDPRESS_ADMIN_USER}
-			WORDPRESS_ADMIN_USER_EMAIL: ${WORDPRESS_ADMIN_USER_EMAIL}
-			WORDPRESS_ADMIN_USER_PASSWORD_FILE: /run/secrets/wp_admin_user_password
-			WORDPRESS_USER: ${WORDPRESS_USER}
-			WORDPRESS_USER_EMAIL: ${WORDPRESS_USER_EMAIL}
-			WORDPRESS_USER_PASSWORD_FILE: /run/secrets/wp_user_password
-		secrets:
-			- db_password
-			- wp_admin_user_password
-			- wp_user_password
-		expose:
-			- "9000"
-		networks:
-			- egg_head
-		volumes:
-			- web:/var/www/html
-		restart: always
+ wordpress:
+  container_name: wordpress
+  depends_on:
+   - mariadb
+  build:
+   context: requirements/wordpress
+  environment:
+   # Wordpress configuration
+   WORDPRESS_DB_HOST: mariadb:3306
+   WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+   WORDPRESS_DB_USER: ${MYSQL_USER}
+   WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_password
+   WORDPRESS_URL: ${DOMAIN_NAME}
+   WORDPRESS_TITLE: ${WORDPRESS_TITLE}
+   # Wordpress user configuration
+   WORDPRESS_ADMIN_USER: ${WORDPRESS_ADMIN_USER}
+   WORDPRESS_ADMIN_USER_EMAIL: ${WORDPRESS_ADMIN_USER_EMAIL}
+   WORDPRESS_ADMIN_USER_PASSWORD_FILE: /run/secrets/wp_admin_user_password
+   WORDPRESS_USER: ${WORDPRESS_USER}
+   WORDPRESS_USER_EMAIL: ${WORDPRESS_USER_EMAIL}
+   WORDPRESS_USER_PASSWORD_FILE: /run/secrets/wp_user_password
+  secrets:
+   - db_password
+   - wp_admin_user_password
+   - wp_user_password
+  expose:
+   - "9000"
+  networks:
+   - egg_head
+  volumes:
+   - web:/var/www/html
+  restart: always
 
 # Secrets
 secrets:
-	db_root_password:
-		file: ../secrets/db_root_password.txt
-	db_password:
-		file: ../secrets/db_password.txt
-	wp_admin_user_password:
-		file: ../secrets/wp_admin_user_password.txt
-	wp_user_password:
-		file: ../secrets/wp_user_password.txt
+ db_root_password:
+  file: ../secrets/db_root_password.txt
+ db_password:
+  file: ../secrets/db_password.txt
+ wp_admin_user_password:
+  file: ../secrets/wp_admin_user_password.txt
+ wp_user_password:
+  file: ../secrets/wp_user_password.txt
 
 # Networks
 networks:
-	egg_head:
-		name: egg_head
-		driver: bridge
+ egg_head:
+  name: egg_head
+  driver: bridge
 
 # Volumes
 ## Driver: local allows to use the local file system
 ## Bind allows containers and host to share the same volume (changes in one side are reflected in the other)
 volumes:
-	# Wordpress data
-	web:
-		driver: local
-		driver_opts:
-			type: none
-			device: ~/Desktop/data/web
-			o: bind
-	# MariaDB data
-	mariadb:
-		driver: local
-		driver_opts:
-			type: none
-			device: ~/Desktop/data/mariadb
-			o: bind
+ # Wordpress data
+ web:
+  driver: local
+  driver_opts:
+   type: none
+   device: ~/Desktop/data/web
+   o: bind
+ # MariaDB data
+ mariadb:
+  driver: local
+  driver_opts:
+   type: none
+   device: ~/Desktop/data/mariadb
+   o: bind
