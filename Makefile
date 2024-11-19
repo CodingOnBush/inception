@@ -1,7 +1,4 @@
 COMPOSE			:=	./srcs/docker-compose.yml
-LOGIN			:=	mos
-
-all: build up
 
 # Build the Docker images defined in docker-compose.yml
 build:
