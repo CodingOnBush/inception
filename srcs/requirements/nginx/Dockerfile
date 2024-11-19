@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM debian:11-slim
 
 # Installer NGINX
 RUN apt-get update -y && \
