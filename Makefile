@@ -1,5 +1,5 @@
 COMPOSE			:=	./srcs/docker-compose.yml
-LOGIN			:=	allblue
+LOGIN			:=	mos
 
 all: build up
 
