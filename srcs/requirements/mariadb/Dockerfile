@@ -6,11 +6,9 @@ RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install -y mariadb-server
 
-COPY conf/mariadb.conf	/etc/mysql/mariadb.conf.d/50-server.cnf
+COPY conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
 
-COPY tools/config_mariadb.sh /usr/local/bin/config_mariadb.sh
-RUN chmod +x /usr/local/bin/config_mariadb.sh
+COPY tools/init_db.sh /usr/local/bin/init_db.sh
+RUN chmod +x /usr/local/bin/init_db.sh
 
-ENTRYPOINT ["config_mariadb.sh"]
-
-CMD ["mysqld"]
+ENTRYPOINT ["init_db.sh"]
