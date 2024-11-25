@@ -13,7 +13,7 @@ echo "Vérification de l'état des conteneurs..."
 docker ps
 
 # Afficher les URL importantes
-DOMAIN=$(grep DOMAIN_NAME ../../.env | cut -d '=' -f2)
+DOMAIN=$(grep DOMAIN_NAME ../.env | cut -d '=' -f2)
 echo ""
 echo "Votre infrastructure est en cours d'exécution !"
 echo "Accédez à votre site WordPress via : https://$DOMAIN"
