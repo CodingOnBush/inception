@@ -21,12 +21,12 @@
 // ** Database settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
 
-define( 'DB_NAME', getenv('thedatabase') );
-define( 'DB_USER', getenv('theuser') );
-define( 'DB_PASSWORD', getenv('abc') );
-define( 'DB_HOST', getenv('mariadb') );
-define( 'WP_HOME', getenv('https://mos.42.fr') );
-define( 'WP_SITEURL', getenv('https://mos.42.fr') );
+define( 'DB_NAME', 'thedatabase');
+define( 'DB_USER', 'theuser');
+define( 'DB_PASSWORD', 'abc');
+define( 'DB_HOST', 'mariadb');
+define( 'WP_HOME', 'https://mos.42.fr');
+define( 'WP_SITEURL', 'https://mos.42.fr');
 
 // define( 'DB_NAME', getenv('DB_NAME') );
 // define( 'DB_USER', getenv('DB_USER') );
