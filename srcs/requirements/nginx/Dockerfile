@@ -17,7 +17,7 @@ RUN		apt update && apt install -y --no-install-recommends --no-install-suggests 
 		openssl && \
 		rm -rf /var/lib/apt/lists/*
 
-ARG		CERT_FOLDER=/etc/nginx/certs/
+# ARG		CERT_FOLDER=/etc/nginx/certs/
 ARG		CERTIFICATE=/etc/nginx/certs/certificate.crt
 ARG		KEY=/etc/nginx/certs/certificate.key
 ARG		COUNTRY=BR
@@ -27,10 +27,11 @@ ARG		ORGANIZATION=42
 ARG		UNIT=42
 ARG		COMMON_NAME=mos.42.fr
 
-ARG		CERT_FOLDER CERTIFICATE KEY COUNTRY STATE LOCALITY ORGANIZATION UNIT COMMON_NAME
+ARG		CERTIFICATE KEY COUNTRY STATE LOCALITY ORGANIZATION UNIT COMMON_NAME
 
-RUN mkdir -p ${CERT_FOLDER} && \
-	openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
+RUN 	mkdir -p "/etc/nginx/certs/"
+
+RUN	openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
     -out ${CERTIFICATE} \
     -keyout ${KEY} \
     -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=${COMMON_NAME}"
