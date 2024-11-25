@@ -26,6 +26,7 @@ WP_ROLE=editor
 chown -R www-data:www-data /var/www/inception/
 
 if [ ! -f "/var/www/inception/wp-config.php" ]; then
+   echo "copying wp-config.php QPOWMDPQOMWDMQWMDPOMQWOPDQPOWMDPMQWDOMQPMWODPOQMWQPOWMDPQOMWDMQWMDPOMQWOPDQPOWMDPMQWDOMQPMWODPOQMWQPOWMDPQOMWDMQWMDPOMQWOPDQPOWMDPMQWDOMQPMWODPOQMW"
    mv /tmp/wp-config.php /var/www/inception/
 fi
 
