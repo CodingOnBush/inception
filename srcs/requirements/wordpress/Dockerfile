@@ -46,4 +46,4 @@ COPY	conf/wp-config.php /tmp/
 COPY	tools/setup_wp.sh /bin/
 RUN		chmod +x /bin/setup_wp.sh
 
-CMD		["setup_wp.sh"]
+CMD		["setup_wp.sh", "php-fpm7.4", "--nodaemonize"]
