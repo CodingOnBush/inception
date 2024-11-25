@@ -13,6 +13,7 @@
 # docker ps
 
 # Afficher les URL importantes
+pwd
 DOMAIN=$(grep WP_FULL_URL ../.env | cut -d '=' -f2)
 echo ""
 echo "Votre infrastructure est en cours d'exécution !"
