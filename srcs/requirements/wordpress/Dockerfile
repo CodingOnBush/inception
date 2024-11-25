@@ -1,44 +1,49 @@
-# Utiliser la version penultième stable d'Alpine comme base
-FROM alpine:3.18
 
-# Installer PHP, PHP-FPM et les dépendances nécessaires
-RUN apk update && apk add --no-cache \
-    php8 \
-    php8-fpm \
-    php8-opcache \
-    php8-mysqli \
-    php8-json \
-    php8-session \
-    php8-curl \
-    php8-dom \
-    php8-exif \
-    php8-fileinfo \
-    php8-mbstring \
-    php8-openssl \
-    php8-xml \
-    php8-zip \
-    mariadb-client \
-    bash \
-    wget \
-    curl \
-    openssl \
-    && mkdir -p /run/php \
-    && rm -rf /var/cache/apk/*
+# this dockerfile is used to build the wordpress container
+# the EXPOSE port is 9000 its a way to tell docker that the container will use this port
+# it install ca-certificates, php7.4-fpm, php7.4-mysql, wget, tar and copy the configuration files
+# the RUN sed changes the php.ini file to fix the path info
+# RUN wget downloads the wp-cli.phar file that is used to install wordpress through the command line
+# at the end creates the folders and set the permissions to the www-data user
+# the runs the setup_wp.sh script that is used to install wordpress
+# and start the php-fpm7.4 server in the foreground
 
-# Créer le dossier pour WordPress
-RUN mkdir -p /var/www/html
+FROM	debian:bullseye
 
-# Copier le script de configuration
-COPY tools/setup_wp.sh /setup_wp.sh
+EXPOSE	9000
 
-# Donner les permissions d'exécution au script
-RUN chmod +x /setup_wp.sh
+ARG		PHPPATH=/etc/php/7.4/fpm
 
-# Définir le dossier de travail
-WORKDIR /var/www/html
+RUN		apt update && apt install --no-install-recommends --no-install-suggests -y \
+		ca-certificates \
+		php7.4-fpm \
+		php7.4-mysql \
+		wget \
+		tar && \
+		rm -rf /var/lib/apt/lists/*
 
-# Exposer le port utilisé par PHP-FPM
-EXPOSE 9000
+RUN		service php7.4-fpm stop
 
-# Commande d'entrée pour exécuter le script et lancer PHP-FPM
-CMD ["/setup_wp.sh"]
+COPY	conf/www.conf ${PHPPATH}/pool.d/
+
+RUN		sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' ${PHPPATH}/php.ini && \
+		sed -i "s/listen = \/run\/php\/php$PHP_VERSION_ENV-fpm.sock/listen = 9000/g" ${PHPPATH}/pool.d/www.conf && \
+		sed -i 's/;listen.mode = 0660/listen.mode = 0660/g' ${PHPPATH}/pool.d/www.conf && \
+		sed -i 's/;daemonize = yes/daemonize = no/g' ${PHPPATH}/pool.d/www.conf
+
+RUN		wget --no-check-certificate https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+		chmod +x wp-cli.phar && \
+		mv wp-cli.phar /usr/local/bin/wp
+
+RUN		mkdir -p /run/php/ && \
+		mkdir -p /var/run/php/ && \
+		mkdir -p /var/www/inception/
+
+RUN		chown -R www-data:www-data /var/www/inception/
+
+COPY	conf/wp-config.php /tmp/
+
+COPY	tools/setup_wp.sh /bin/
+RUN		chmod +x /bin/setup_wp.sh
+
+CMD		["setup_wp.sh", "php-fpm7.4", "--nodaemonize"]

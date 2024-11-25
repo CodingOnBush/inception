@@ -1,55 +1,57 @@
-#!/bin/sh
+#!/bin/bash
 
-# Script de configuration et d'installation de WordPress
+# this script run in the building container
+# it changes the ownership of the /var/www/inception/ folder to www-data user
+# then sure that the wp-config.php file is in the /var/www/inception/ folder
+# then it downloads the wordpress core files if they are not already there
+# then it installs wordpress if it is not already installed
+# and set the admin user and password if they are not already set
+# this variables are set in the .env file
+# the penultimate line download and activate the raft theme, that I liked most
+# at the end, exec $@ run the next CMD in the Dockerfile.
+# In this case: starts the php-fpm7.4 server in the foreground
 
-# Variables
-WORDPRESS_ROOT=/var/www/html
-WORDPRESS_URL="https://wordpress.org/latest.tar.gz"
+# set -ex # print commands & exit on error (debug mode)
 
-# Créer le répertoire pour WordPress
-mkdir -p $WORDPRESS_ROOT
+# WP_URL=login.42.fr
+# WP_TITLE=Inception
+# WP_ADMIN_USER=theroot
+# WP_ADMIN_PASSWORD=123
+# WP_ADMIN_EMAIL=theroot@123.com
+# WP_USER=theuser
+# WP_PASSWORD=abc
+# WP_EMAIL=theuser@123.com
+# WP_ROLE=editor
 
-# Télécharger et extraire WordPress
-echo "Téléchargement de WordPress..."
-wget -q -O /tmp/wordpress.tar.gz $WORDPRESS_URL
-tar -xzf /tmp/wordpress.tar.gz -C /tmp
-mv /tmp/wordpress/* $WORDPRESS_ROOT
+chown -R www-data:www-data /var/www/inception/
 
-# Configurer les permissions
-echo "Configuration des permissions..."
-chown -R www-data:www-data $WORDPRESS_ROOT
-chmod -R 755 $WORDPRESS_ROOT
+if [ ! -f "/var/www/inception/wp-config.php" ]; then
+   mv /tmp/wp-config.php /var/www/inception/
+fi
 
-# Générer le fichier wp-config.php
-echo "Création de wp-config.php..."
-cat > $WORDPRESS_ROOT/wp-config.php <<EOL
-<?php
-define('DB_NAME', getenv('MYSQL_DATABASE'));
-define('DB_USER', getenv('MYSQL_USER'));
-define('DB_PASSWORD', getenv('MYSQL_PASSWORD'));
-define('DB_HOST', 'mariadb');
-define('DB_CHARSET', 'utf8');
-define('DB_COLLATE', '');
-define('AUTH_KEY',         '$(openssl rand -base64 32)');
-define('SECURE_AUTH_KEY',  '$(openssl rand -base64 32)');
-define('LOGGED_IN_KEY',    '$(openssl rand -base64 32)');
-define('NONCE_KEY',        '$(openssl rand -base64 32)');
-define('AUTH_SALT',        '$(openssl rand -base64 32)');
-define('SECURE_AUTH_SALT', '$(openssl rand -base64 32)');
-define('LOGGED_IN_SALT',   '$(openssl rand -base64 32)');
-define('NONCE_SALT',       '$(openssl rand -base64 32)');
-\$table_prefix = 'wp_';
-define('WP_DEBUG', false);
-if ( !defined('ABSPATH') )
-    define('ABSPATH', dirname(__FILE__) . '/');
-require_once(ABSPATH . 'wp-settings.php');
-EOL
+sleep 10
 
-# Nettoyage
-echo "Nettoyage..."
-rm -rf /tmp/wordpress /tmp/wordpress.tar.gz
+wp --allow-root --path="/var/www/inception/" core download || true
 
-echo "WordPress est installé et configuré !"
+if ! wp --allow-root --path="/var/www/inception/" core is-installed;
+then
+    wp  --allow-root --path="/var/www/inception/" core install \
+        --url=$WP_URL \
+        --title=$WP_TITLE \
+        --admin_user=$WP_ADMIN_USER \
+        --admin_password=$WP_ADMIN_PASSWORD \
+        --admin_email=$WP_ADMIN_EMAIL
+fi;
 
-# Lancer PHP-FPM
-php-fpm8 -F
+if ! wp --allow-root --path="/var/www/inception/" user get $WP_USER;
+then
+    wp  --allow-root --path="/var/www/inception/" user create \
+        $WP_USER \
+        $WP_EMAIL \
+        --user_pass=$WP_PASSWORD \
+        --role=$WP_ROLE
+fi;
+
+wp --allow-root --path="/var/www/inception/" theme install raft --activate 
+
+exec $@

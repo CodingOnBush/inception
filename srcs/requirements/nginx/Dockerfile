@@ -1,26 +1,49 @@
-# Utiliser la version penultième stable d'Alpine comme base
-FROM alpine:3.18
 
-# Mettre à jour le système et installer NGINX, OpenSSL et les outils nécessaires
-RUN apk update && apk add --no-cache \
-    nginx \
-    openssl \
-    && rm -rf /var/cache/apk/*
+# this dockerfile is used to build the image for the nginx container
+# the EXPOSE port is 443 its a way to tell docker that the container will use this port
+# it install nginx and openssl, create a self-signed certificate and copy the configuration files
+# the ARG call receive args from the docker-compose.yml file that is given by the .env file
+# it is the only way that I could find to pass the args to the dockerfile
+# the RUN echo completes the server.conf file with the private information 
+# the penultimate RUN define the www-data user as the owner of the /var/www/
+# at the end it runs starts the nginx server in the foreground
 
-# Créer les dossiers nécessaires pour les certificats SSL et les fichiers web
-RUN mkdir -p /etc/nginx/ssl /var/www/html
+FROM	debian:bullseye
 
-# Copier la configuration NGINX personnalisée dans le conteneur
-COPY conf/nginx.conf /etc/nginx/nginx.conf
+EXPOSE	443
 
-# Copier le script d'installation dans le conteneur
-COPY tools/setup_nginx.sh /setup_nginx.sh
+RUN		apt update && apt install -y --no-install-recommends --no-install-suggests \
+		nginx \
+		openssl && \
+		rm -rf /var/lib/apt/lists/*
 
-# Donner les droits d'exécution au script
-RUN chmod +x /setup_nginx.sh
+# ARG		CERT_FOLDER=/etc/nginx/certs/
+# ARG		CERTIFICATE=/etc/nginx/certs/certificate.crt
+# ARG		KEY=/etc/nginx/certs/certificate.key
+# ARG		COUNTRY=BR
+# ARG		STATE=BA
+# ARG		LOCALITY=Salvador
+# ARG		ORGANIZATION=42
+# ARG		UNIT=42
+# ARG		COMMON_NAME=login.42.fr
 
-# Exposer le port HTTPS uniquement
-EXPOSE 443
+ARG		CERT_FOLDER CERTIFICATE KEY COUNTRY STATE LOCALITY ORGANIZATION UNIT COMMON_NAME
 
-# Commande pour exécuter le script d'installation et démarrer NGINX
-CMD ["/setup_nginx.sh"]
+RUN mkdir -p ${CERT_FOLDER} && \
+	openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
+    -out ${CERTIFICATE} \
+    -keyout ${KEY} \
+    -subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=${COMMON_NAME}"
+
+COPY	conf/nginx.conf	/etc/nginx/
+COPY	conf/server.conf	/etc/nginx/conf.d/
+
+RUN		echo "\tserver name ${COMMON_NAME};\n\
+			\tssl_certificate ${CERTIFICATE};\n\
+			\tssl_certificate_key ${KEY};\n\
+			}" >> /etc/nginx/conf.d/server.conf
+
+RUN		mkdir -p /var/www/
+RUN		chown -R www-data:www-data /var/www/
+
+CMD		["nginx", "-g", "daemon off;"]
