@@ -32,18 +32,6 @@ status:
 	@echo "État des conteneurs actifs :"
 	@docker ps
 
-# Go inside nginx container
-nginx:
-	@docker exec -it nginx /bin/sh
-
-# Go inside wordpress container
-wordpress:
-	@docker exec -it wordpress /bin/sh
-
-# Go inside mariadb container
-mariadb:
-	@docker exec -it mariadb /bin/sh
-
 # Aide pour les commandes disponibles
 help:
 	@echo "Commandes disponibles dans le Makefile :"
@@ -52,3 +40,4 @@ help:
 	@echo "  make clean    -> Nettoie l'environnement Docker"
 	@echo "  make re       -> Reconstruit tout le projet"
 	@echo "  make status   -> Affiche l'état des conteneurs actifs"
+	@echo "  tips : docker exec -it <service> /bin/bash"
