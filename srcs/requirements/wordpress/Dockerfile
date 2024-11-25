@@ -5,7 +5,7 @@
 # the RUN sed changes the php.ini file to fix the path info
 # RUN wget downloads the wp-cli.phar file that is used to install wordpress through the command line
 # at the end creates the folders and set the permissions to the www-data user
-# the runs the setup.sh script that is used to install wordpress
+# the runs the setup_wp.sh script that is used to install wordpress
 # and start the php-fpm7.4 server in the foreground
 
 FROM	debian:bullseye
@@ -43,7 +43,7 @@ RUN		chown -R www-data:www-data /var/www/inception/
 
 COPY	conf/wp-config.php /tmp/
 
-COPY	tools/setup.sh /bin/
-RUN		chmod +x /bin/setup.sh
+COPY	tools/setup_wp.sh /bin/
+RUN		chmod +x /bin/setup_wp.sh
 
-CMD		["setup.sh", "php-fpm7.4", "--nodaemonize"]
+CMD		["setup_wp.sh", "php-fpm7.4", "--nodaemonize"]
