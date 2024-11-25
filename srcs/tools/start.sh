@@ -14,7 +14,7 @@
 
 # Afficher les URL importantes
 pwd
-DOMAIN=$(grep WP_FULL_URL ../.env | cut -d '=' -f2)
+DOMAIN=$(grep WP_FULL_URL ./srcs/.env | cut -d '=' -f2)
 echo ""
 echo "Votre infrastructure est en cours d'exécution !"
 echo "Accédez à votre site WordPress via : $WP_FULL_URL"
