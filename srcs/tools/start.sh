@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # Nettoyer l'environnement Docker avant de démarrer
-echo "Nettoyage de l'environnement Docker..."
-./srcs/tools/clean.sh
+# echo "Nettoyage de l'environnement Docker..."
+# ./srcs/tools/clean.sh
 
 # Construire et lancer les conteneurs
-echo "Construction et démarrage des services Docker..."
-docker-compose -f srcs/docker-compose.yml up --build -d
+# echo "Construction et démarrage des services Docker..."
+# docker-compose -f srcs/docker-compose.yml up --build -d
 
 # Vérifier l'état des conteneurs
-echo "Vérification de l'état des conteneurs..."
-docker ps
+# echo "Vérification de l'état des conteneurs..."
+# docker ps
 
 # Afficher les URL importantes
 DOMAIN=$(grep DOMAIN_NAME ../.env | cut -d '=' -f2)
