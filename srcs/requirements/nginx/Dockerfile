@@ -12,7 +12,7 @@ FROM	debian:bullseye
 
 EXPOSE	443
 
-RUN		apt update && apt install -y --no-install-recommends --no-install-suggests \
+RUN		apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
 		nginx \
 		openssl && \
 		rm -rf /var/lib/apt/lists/*
