@@ -15,6 +15,7 @@ EXPOSE	9000
 # ARG		PHPPATH=/etc/php/7.4/fpm
 
 RUN		apt update && apt install --no-install-recommends --no-install-suggests -y \
+		vim \
 		ca-certificates \
 		php7.4-fpm \
 		php7.4-mysql \
