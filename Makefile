@@ -11,15 +11,15 @@ all: $(NAME)
 
 $(NAME): up
 
-# puts the url in the host files and starts the containers trough docker compose
+# puts the url in the host files and starts the containers trough docker-compose
 up: create_dir
 	@sudo hostsed add 127.0.0.1 $(HOST_URL) > $(HIDE) && echo " $(HOST_ADD)"
-	@docker compose -p $(NAME) -f $(COMPOSE) up --build || (echo " $(FAIL)" && exit 1)
+	@docker-compose -p $(NAME) -f $(COMPOSE) up --build || (echo " $(FAIL)" && exit 1)
 	@echo " $(UP)"
 
-# stops the containers through docker compose
+# stops the containers through docker-compose
 down:
-	@docker compose -p $(NAME) down
+	@docker-compose -p $(NAME) down
 	@echo " $(DOWN)"
 
 create_dir:
@@ -32,7 +32,7 @@ backup:
 
 # stop the containers, remove the volumes and remove the containers
 clean:
-	@docker compose -f $(COMPOSE) down -v
+	@docker-compose -f $(COMPOSE) down -v
 	@if [ -n "$$(docker ps -a --filter "name=nginx" -q)" ]; then docker rm -f nginx > $(HIDE) && echo " $(NX_CLN)" ; fi
 	@if [ -n "$$(docker ps -a --filter "name=wordpress" -q)" ]; then docker rm -f wordpress > $(HIDE) && echo " $(WP_CLN)" ; fi
 	@if [ -n "$$(docker ps -a --filter "name=mariadb" -q)" ]; then docker rm -f mariadb > $(HIDE) && echo " $(DB_CLN)" ; fi
