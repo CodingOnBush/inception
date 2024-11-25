@@ -13,9 +13,9 @@
 # docker ps
 
 # Afficher les URL importantes
-DOMAIN=$(grep DOMAIN_NAME ../.env | cut -d '=' -f2)
+DOMAIN=$(grep WP_FULL_URL ../.env | cut -d '=' -f2)
 echo ""
 echo "Votre infrastructure est en cours d'exécution !"
-echo "Accédez à votre site WordPress via : https://$DOMAIN"
+echo "Accédez à votre site WordPress via : $WP_FULL_URL"
 echo "Pour voir les logs d'un service, utilisez : docker logs <nom_du_conteneur>"
 echo "Pour arrêter tous les conteneurs : docker-compose -f srcs/docker-compose.yml down"
