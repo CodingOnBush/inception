@@ -7,10 +7,10 @@
 
 # set -ex # print commands & exit on error (debug mode)
 
-# DB_NAME=thedatabase
-# DB_USER=theuser
-# DB_PASSWORD=abc
-# DB_PASS_ROOT=123
+DB_NAME=thedatabase
+DB_USER=theuser
+DB_PASSWORD=abc
+DB_PASS_ROOT=123
 
 service mariadb start
 
