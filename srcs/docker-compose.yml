@@ -1,67 +1,59 @@
-version: '3'
+version: "3.9"
 
 services:
+  # Service MariaDB
   mariadb:
+    build:
+      context: ./requirements/mariadb
     container_name: mariadb
-    build:
-      context: requirements/mariadb
-      dockerfile: Dockerfile
-    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wp_user
+      MYSQL_PASSWORD: wp_password
     volumes:
-      - mariadb:/var/lib/mysql
-    restart: unless-stopped
+      - mariadb_data:/var/lib/mysql
     networks:
-      - inception
-    expose:
-      - "3306"
+      - app_network
 
+  # Service WordPress
   wordpress:
+    build:
+      context: ./requirements/wordpress
     container_name: wordpress
-    build:
-      context: requirements/wordpress
-      dockerfile: Dockerfile
-    env_file: .env
+    environment:
+      MYSQL_HOST: mariadb
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wp_user
+      MYSQL_PASSWORD: wp_password
     volumes:
-      - wordpress:/var/www/wordpress
-    restart: on-failure
+      - wordpress_data:/var/www/html
     networks:
-      - inception
-    depends_on:
-      - mariadb
-    expose:
-      - "9000"
+      - app_network
 
+  # Service NGINX
   nginx:
-    container_name: nginx
     build:
-      context: requirements/nginx
-      dockerfile: Dockerfile
-    env_file: .env
+      context: ./requirements/nginx
+    container_name: nginx
     ports:
       - "443:443"
-    volumes:
-      - wordpress:/var/www/wordpress
-    restart: on-failure
-    networks:
-      - inception
     depends_on:
       - wordpress
+      - mariadb
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - app_network
 
+# Configuration des volumes pour la persistance des données
 volumes:
-  wordpress:
+  mariadb_data:
     driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '/home/mos/data/wordpress'
-
-  mariadb:
+  wordpress_data:
     driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '/home/mos/data/mariadb'
 
+# Réseau pour la communication entre les conteneurs
 networks:
-  inception:
+  app_network:
     driver: bridge

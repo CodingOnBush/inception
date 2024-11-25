@@ -1,30 +1,42 @@
-COMPOSE			:=	./srcs/docker-compose.yml
+# Variables
+DOCKER_COMPOSE = docker-compose -f srcs/docker-compose.yml
+START_SCRIPT = ./srcs/tools/start.sh
+CLEAN_SCRIPT = ./srcs/tools/clean.sh
 
-# Build the Docker images defined in docker-compose.yml
-build:
-	docker-compose -f $(COMPOSE) build
+# Cible par défaut : Démarrer le projet
+all: start
 
-# Start the containers
-up:
-	docker-compose -f $(COMPOSE) up -d
+# Démarrer le projet avec le script start.sh
+start:
+	@echo "Démarrage de l'infrastructure..."
+	@$(START_SCRIPT)
 
-# Stop the containers without removing them
+# Arrêter tous les conteneurs
 stop:
-	docker-compose -f $(COMPOSE) stop
+	@echo "Arrêt des conteneurs..."
+	@$(DOCKER_COMPOSE) down
 
-# Restart the containers
-restart: stop up
+# Nettoyer l'environnement Docker
+clean:
+	@echo "Nettoyage complet de l'environnement Docker..."
+	@$(CLEAN_SCRIPT)
 
-# Print a list of running containers
-ps:
-	docker-compose -f $(COMPOSE) ps
+# Rebuild complet
+re:
+	@echo "Reconstruction complète du projet..."
+	@make clean
+	@make start
 
-# Remove the containers and networks, without affecting volumes or images
-down:
-	docker-compose -f $(COMPOSE) down
+# Afficher l'état des conteneurs
+status:
+	@echo "État des conteneurs actifs :"
+	@docker ps
 
-# Clean up containers, networks, and associated images
-clean: down
-	docker system prune -f
-
-.PHONY: build up down stop restart clean ps
+# Aide pour les commandes disponibles
+help:
+	@echo "Commandes disponibles dans le Makefile :"
+	@echo "  make start    -> Démarre l'infrastructure avec docker-compose"
+	@echo "  make stop     -> Arrête tous les conteneurs"
+	@echo "  make clean    -> Nettoie l'environnement Docker"
+	@echo "  make re       -> Reconstruit tout le projet"
+	@echo "  make status   -> Affiche l'état des conteneurs actifs"

@@ -1,14 +1,28 @@
-# Utiliser une image de base Debian
-FROM debian:bullseye
+# Utiliser Alpine comme base (penultième version stable)
+FROM alpine:3.18
 
-# Installer MariaDB
-RUN apt-get update
-RUN apt-get upgrade -y
-RUN apt-get install -y mariadb-server
+# Installer MariaDB et les outils nécessaires
+RUN apk update && apk add --no-cache \
+    mariadb \
+    mariadb-client \
+    bash \
+    && rm -rf /var/cache/apk/*
 
-COPY conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
+# Créer les dossiers nécessaires pour MariaDB
+RUN mkdir -p /var/lib/mysql /run/mysqld /etc/mysql/conf.d && \
+    chown -R mysql:mysql /var/lib/mysql /run/mysqld
 
-COPY tools/init_db.sh /usr/local/bin/init_db.sh
-RUN chmod +x /usr/local/bin/init_db.sh
+# Copier le fichier de configuration personnalisé
+COPY conf/my.cnf /etc/mysql/my.cnf
 
-ENTRYPOINT ["init_db.sh"]
+# Copier le script d'installation
+COPY tools/setup_db.sh /setup_db.sh
+
+# Donner les permissions d'exécution au script
+RUN chmod +x /setup_db.sh
+
+# Exposer le port 3306 pour MariaDB
+EXPOSE 3306
+
+# Commande d'entrée pour lancer MariaDB via le script
+CMD ["/setup_db.sh"]

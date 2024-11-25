@@ -1,23 +1,26 @@
-FROM debian:bullseye
+# Utiliser la version penultième stable d'Alpine comme base
+FROM alpine:3.18
 
-# Installer NGINX
-RUN apt-get update -y && \
-	apt-get upgrade -y && \
-    apt-get install -y vim curl nginx openssl
+# Mettre à jour le système et installer NGINX, OpenSSL et les outils nécessaires
+RUN apk update && apk add --no-cache \
+    nginx \
+    openssl \
+    && rm -rf /var/cache/apk/*
 
+# Créer les dossiers nécessaires pour les certificats SSL et les fichiers web
+RUN mkdir -p /etc/nginx/ssl /var/www/html
+
+# Copier la configuration NGINX personnalisée dans le conteneur
 COPY conf/nginx.conf /etc/nginx/nginx.conf
-RUN	mkdir -p /etc/nginx/ssl
 
-# SSL certificate 
-RUN	openssl req \
-	-x509 \
-	-nodes \
-	-out /etc/nginx/ssl/inception.crt \
-	-keyout /etc/nginx/ssl/inception.key \
-	-subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=mos.42.fr/UID=mos"
+# Copier le script d'installation dans le conteneur
+COPY tools/setup_nginx.sh /setup_nginx.sh
 
-RUN chmod 644 /etc/nginx/ssl/inception.crt /etc/nginx/ssl/inception.key
-RUN chmod 755 /var/www/html
-RUN chown -R www-data:www-data /var/www/html
+# Donner les droits d'exécution au script
+RUN chmod +x /setup_nginx.sh
 
-CMD ["nginx", "-g", "daemon off;"]
+# Exposer le port HTTPS uniquement
+EXPOSE 443
+
+# Commande pour exécuter le script d'installation et démarrer NGINX
+CMD ["/setup_nginx.sh"]
