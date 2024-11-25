@@ -1,6 +1,14 @@
 #!/bin/bash
 
-WP_URL=login.42.fr
+# Database settings
+DB_NAME=thedatabase
+DB_USER=theuser
+DB_PASSWORD=abc
+DB_PASS_ROOT=123
+DB_HOST=mariadb
+
+# Wordpress settings
+WP_URL=mos.42.fr
 WP_TITLE=Inception
 WP_ADMIN_USER=theroot
 WP_ADMIN_PASSWORD=123
@@ -8,7 +16,19 @@ WP_ADMIN_EMAIL=theroot@123.com
 WP_USER=theuser
 WP_PASSWORD=abc
 WP_EMAIL=theuser@123.com
-# WP_ROLE=editor
+WP_ROLE=editor
+WP_FULL_URL=https://mos.42.fr
+
+# SSL settings
+CERT_FOLDER=/etc/nginx/certs/
+CERTIFICATE=/etc/nginx/certs/certificate.crt
+KEY=/etc/nginx/certs/certificate.key
+COUNTRY=BR
+STATE=BA
+LOCALITY=Salvador
+ORGANIZATION=42
+UNIT=42
+COMMON_NAME=mos.42.fr
 
 # PHP configuration
 
@@ -75,28 +95,6 @@ if ! wp core is-installed --allow-root ; then
 		--user_pass=$wp_user_password \
 		--allow-root
 fi
-## Add redis cache
-### Install Redis plugin
-if [ ! -d /var/www/html/wordpress/wp-content/plugins/redis-cache ]; then
-    wp plugin install redis-cache --activate --allow-root
-    ### Set Redis configuration
-    #### Set wordpress cache to true
-    wp config set WP_CACHE true --raw --allow-root
-    #### Define Redis Host and Port (to reach the redis service)
-    wp config set WP_REDIS_HOST redis --raw --allow-root
-    wp config set WP_REDIS_PORT 6379 --raw --allow-root
-    #### Define redis database, password and timeouts
-    ##### Set cache database to redis database 0
-    wp config set WP_REDIS_DATABASE 0 --raw --allow-root
-    wp config set WP_REDIS_PASSWORD "" --allow-root
-    wp config set WP_REDIS_TIMEOUT 1 --raw --allow-root
-    wp config set WP_REDIS_READ_TIMEOUT 5 --raw --allow-root
-    #### Define maxttl (time to live) to 1 hour (3600 seconds)
-    wp config set WP_REDIS_MAXTTL 3600 --raw --allow-root
-    ### Enable cache
-    wp redis enable --allow-root
-fi
-
 # Start
 
 php-fpm$php_version -F -R --nodaemonize
