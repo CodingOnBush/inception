@@ -1,43 +1,42 @@
-# Variables
-DOCKER_COMPOSE = docker-compose -f srcs/docker-compose.yml
-START_SCRIPT = ./srcs/tools/start.sh
-CLEAN_SCRIPT = ./srcs/tools/clean.sh
+DOCKER_COMPOSE	:=	docker-compose -f srcs/docker-compose.yml
+START_SCRIPT	:=	./srcs/tools/start.sh
+CLEAN_SCRIPT	:=	./srcs/tools/clean.sh
 
-# Cible par défaut : Démarrer le projet
+RED		:=	\033[0;31m
+GREEN	:=	\033[0;32m
+YELLOW	:=	\033[0;33m
+NC		:=	\033[0m
+
 all: start
 
-# Démarrer le projet avec le script start.sh
 start:
-	@echo "Démarrage de l'infrastructure..."
+	@echo $(GREEN)"Starting the environment..."$(NC)
 	@$(START_SCRIPT)
 
-# Arrêter tous les conteneurs
 stop:
-	@echo "Arrêt des conteneurs..."
+	@echo $(RED)"Stopping the environment..."$(NC)
 	@$(DOCKER_COMPOSE) down
 
-# Nettoyer l'environnement Docker
 clean:
-	@echo "Nettoyage complet de l'environnement Docker..."
+	@echo $(YELLOW)"Cleaning the environment..."$(NC)
 	@$(CLEAN_SCRIPT)
 
-# Rebuild complet
 re:
-	@echo "Reconstruction complète du projet..."
+	@echo $(YELLOW)"Rebuilding the project..."$(NC)
 	@make clean
 	@make start
 
-# Afficher l'état des conteneurs
 status:
-	@echo "État des conteneurs actifs :"
+	@echo $(YELLOW)"Status of the containers..."$(NC)
 	@docker ps
 
-# Aide pour les commandes disponibles
 help:
-	@echo "Commandes disponibles dans le Makefile :"
-	@echo "  make start    -> Démarre l'infrastructure avec docker-compose"
-	@echo "  make stop     -> Arrête tous les conteneurs"
-	@echo "  make clean    -> Nettoie l'environnement Docker"
-	@echo "  make re       -> Reconstruit tout le projet"
-	@echo "  make status   -> Affiche l'état des conteneurs actifs"
-	@echo "  tips : docker exec -it <service> /bin/bash"
+	@echo $(YELLOW)"Usage :"$(NC)
+	@echo $(YELLOW)"  make start    -> Start all the containers"$(NC)
+	@echo $(YELLOW)"  make stop     -> Stop all the containers"$(NC)
+	@echo $(YELLOW)"  make clean    -> Clean the environment"$(NC)
+	@echo $(YELLOW)"  make re       -> Rebuid the project"$(NC)
+	@echo $(YELLOW)"  make status   -> Display the status of the containers"$(NC)
+	@echo $(YELLOW)"  tips : docker exec -it <service> /bin/bash"$(NC)
+
+.PHONY: all start stop clean re status help
