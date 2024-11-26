@@ -1,21 +1,16 @@
 #!/bin/bash
 
-# Arrêter et supprimer tous les conteneurs
-echo "Arrêt et suppression de tous les conteneurs..."
-docker stop $(docker ps -qa) 2>/dev/null
-docker rm $(docker ps -qa) 2>/dev/null
+echo "Stop and remove all containers..."
+docker stop $(docker ps -qa)
+docker rm $(docker ps -qa)
 
-# Supprimer tous les volumes Docker
-echo "Suppression de tous les volumes..."
-docker volume rm $(docker volume ls -q) 2>/dev/null
+echo "Remove all volumes..."
+docker volume rm $(docker volume ls -q)
 
-# Supprimer toutes les images Docker non utilisées
-echo "Suppression de toutes les images non utilisées..."
-docker rmi -f $(docker images -qa) 2>/dev/null
+echo "Remove all images..."
+docker rmi -f $(docker images -qa)
 
-# Supprimer tous les réseaux Docker non utilisés
-echo "Suppression de tous les réseaux non utilisés..."
-docker network rm $(docker network ls -q) 2>/dev/null
+echo "Remove all networks..."
+docker network rm $(docker network ls -q)
 
-# Nettoyage terminé
-echo "Nettoyage Docker terminé !"
+echo "Docker clean done!"

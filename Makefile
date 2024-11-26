@@ -37,6 +37,6 @@ help:
 	@echo $(YELLOW)"  make clean    -> Clean the environment"$(NC)
 	@echo $(YELLOW)"  make re       -> Rebuid the project"$(NC)
 	@echo $(YELLOW)"  make status   -> Display the status of the containers"$(NC)
-	@echo $(YELLOW)"  tips : docker exec -it <service> /bin/bash"$(NC)
+	@echo $(YELLOW)"  tips : docker exec -it <containerID> /bin/bash"$(NC)
 
 .PHONY: all start stop clean re status help
