@@ -2,10 +2,10 @@ DOCKER_COMPOSE	:=	docker-compose -f srcs/docker-compose.yml
 START_SCRIPT	:=	./srcs/tools/start.sh
 CLEAN_SCRIPT	:=	./srcs/tools/clean.sh
 
-RED		:=	\033[0;31m
-GREEN	:=	\033[0;32m
-YELLOW	:=	\033[0;33m
-NC		:=	\033[0m
+RED		:=	"\033[0;31m"
+GREEN	:=	"\033[0;32m"
+YELLOW	:=	"\033[0;33m"
+NC		:=	"\033[0m"
 
 all: start
 
