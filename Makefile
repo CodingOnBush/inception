@@ -13,8 +13,8 @@ all: help
 
 init:
 	@echo $(GREEN)"Building the environment..."$(NC)
-	mkdir -p /home/$(LOGIN)/data/database
-	mkdir -p /home/$(LOGIN)/data/wp_files
+	sudo mkdir -p /home/$(LOGIN)/data/database
+	sudo mkdir -p /home/$(LOGIN)/data/wp_files
 	docker-compose -f $(COMPOSE_FILE) up -d --build
 
 start:
@@ -33,10 +33,10 @@ clean:
 	@echo $(GREEN)"Cleaning the environment..."$(NC)
 	docker-compose -f $(COMPOSE_FILE) down --rmi all --volumes
 	docker system prune -af
-	rm -rf /home/$(LOGIN)/data
+	sudo rm -rf /home/$(LOGIN)/data
 
 re: clean init start
-	@echo $(GREEN)"Rebuilding the project..."$(NC)
+	@echo $(GREEN)"Project rebuilt :))"$(NC)
 
 status:
 	@echo $(GREEN)"Status of the containers..."$(NC)
