@@ -8,7 +8,7 @@ all: help
 
 build:
 	@echo $(GREEN)"Building the environment..."$(NC)
-	docker-compose -f $(COMPOSE_FILE) --build
+	docker-compose -f $(COMPOSE_FILE) build
 
 up:
 	@echo $(GREEN)"Starting the environment..."$(NC)
