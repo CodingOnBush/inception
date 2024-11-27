@@ -10,6 +10,7 @@ YELLOW			:=	"\033[0;33m"
 NC				:=	"\033[0m"
 
 all: help
+	@echo "Hi! Welcome to the project :))"
 
 init:
 	@echo $(GREEN)"Building the environment..."$(NC)

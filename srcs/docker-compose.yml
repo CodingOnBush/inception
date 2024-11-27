@@ -1,72 +1,14 @@
 services:
-  mariadb:
-    container_name: mariadb
-    build: ./requirements/mariadb/
+  nginx:
+    build: ./requirements/nginx/
+    container_name: nginx
+    ports: 
+      - "80:80"
     volumes: 
-      - database:/var/lib/mysql/
-    networks: 
-      - my_network
-    init: true
-    env_file: .env
-    restart: unless-stopped
+      - ./web:/var/www/html
 
   wordpress:
-    container_name: wordpress
     build: ./requirements/wordpress/
-    volumes: 
-      - wp_files:/var/www/html/
-    networks: 
-      - my_network
-    init: true
-    env_file: .env
-    depends_on: 
-      - mariadb
-    restart: unless-stopped
-
-  nginx:
-    container_name: nginx
-    build: ./requirements/nginx/
-    ports: 
-      - "443:443"
-      # "<host_port>:<container_port>"
-      # Exposes the container's port to the host, allowing external traffic to reach the service.
-      # Maps port 443 on the host to port 443 on the container to enable HTTPS access.
-    volumes: 
-      - wp_files:/var/www/html/
-      # "<host_path>:<container_path>"
-      # Mounts the WordPress files to allow Nginx to serve the website.
-    networks: 
-      - my_network
-    init: true
-      # Ensures that the container runs initialization scripts before starting the main process.
-    env_file: .env
-      # Specifies the environment file to use for the container.
-    depends_on: 
-      - wordpress
-      # Specifies the dependencies for starting this container.
-    restart: unless-stopped
-      # Restarts the container automatically if it fails. (https://github.com/compose-spec/compose-spec/blob/main/spec.md#restart)
-
-volumes:
-  database:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/${LOGIN}/data/database
-  wp_files:
-    driver: local
-    # Specifies the local driver for the volume, which uses the host's filesystem.
-    driver_opts:
-      type: none
-      # Indicates no specific type for the volume, defaulting to a standard bind mount.
-      o: bind
-      # Specifies that this volume uses a bind mount to map a directory from the host.
-      device: /home/${LOGIN}/data/wp_files
-      # Specifies the directory on the host to bind to the container.
-    # Volumes for persisting data across container restarts bound to host directories.
-
-networks:
-  my_network:
-    driver: bridge
-    # A custom bridge network for communication between containers.
+    container_name: wp-php
+    volumes:
+      - ./web:/var/www/html

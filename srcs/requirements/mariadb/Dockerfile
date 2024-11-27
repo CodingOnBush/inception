@@ -1,5 +1,7 @@
 FROM	debian:bullseye
 
+RUN		env
+
 EXPOSE	3306
 
 RUN		apt-get update && \
