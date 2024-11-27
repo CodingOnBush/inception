@@ -53,15 +53,17 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ~/data/database
-      # Volume for MariaDB data storage
+      device: /home/${LOGIN}/data/database
   wp_files:
     driver: local
+	# Specifies the local driver for the volume, which uses the host's filesystem.
     driver_opts:
       type: none
+	  # Indicates no specific type for the volume, defaulting to a standard bind mount.
       o: bind
-      device: ~/data/wp_files
-      # Volume for WordPress files
+	  # Specifies that this volume uses a bind mount to map a directory from the host.
+      device: /home/${LOGIN}/data/wp_files
+      # Specifies the directory on the host to bind to the container.
     # Volumes for persisting data across container restarts bound to host directories.
 
 networks:
