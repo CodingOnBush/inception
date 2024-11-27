@@ -7,15 +7,15 @@ RUN		apt-get update && apt-get install -y --no-install-recommends --no-install-s
 		openssl && \
 		rm -rf /var/lib/apt/lists/*
 
-ARG		CERT_FOLDER="/etc/ssl/certs/"
-ARG		CERTIFICATE="${CERT_FOLDER}nginx.crt"
-ARG		KEY="${CERT_FOLDER}nginx.key"
-ARG		COUNTRY="FR"
-ARG		STATE="Ile-de-France"
-ARG		LOCALITY="Paris"
-ARG		ORGANIZATION="42"
-ARG		UNIT="IT"
-ARG		COMMON_NAME="mos.42.fr"
+ENV		CERT_FOLDER=${CERT_FOLDER}
+ENV		CERTIFICATE=${CERTIFICATE}
+ENV		KEY=${KEY}
+ENV		COUNTRY=${COUNTRY}
+ENV		STATE=${STATE}
+ENV		LOCALITY=${LOCALITY}
+ENV		ORGANIZATION=${ORGANIZATION}
+ENV		UNIT=${UNIT}
+ENV		COMMON_NAME=${COMMON_NAME}
 
 RUN		mkdir -p ${CERT_FOLDER} && \
 		openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
@@ -23,14 +23,9 @@ RUN		mkdir -p ${CERT_FOLDER} && \
 		-keyout ${KEY} \
 		-subj "/C=${COUNTRY}/ST=${STATE}/L=${LOCALITY}/O=${ORGANIZATION}/OU=${UNIT}/CN=${COMMON_NAME}"
 
-COPY	conf/nginx.conf	/etc/nginx/
-COPY	conf/server.conf	/etc/nginx/conf.d/
+COPY	conf/nginx.conf /etc/nginx/nginx.conf
 
-RUN		echo "\tserver_name ${COMMON_NAME};\n\
-		\tssl_certificate ${CERTIFICATE};\n\
-		\tssl_certificate_key ${KEY};\n\
-		}" >> /etc/nginx/conf.d/server.conf
-
+# 		Create the folder for the wordpress files and change its owner to www-data user.
 RUN		mkdir -p /var/www/
 RUN		chown -R www-data:www-data /var/www/
 

@@ -14,7 +14,7 @@ services:
     container_name: wordpress
     build: ./requirements/wordpress/
     volumes: 
-      - wp_files:/var/www/inception/
+      - wp_files:/var/www/html/
     networks: 
       - my_network
     init: true
@@ -32,7 +32,7 @@ services:
       # Exposes the container's port to the host, allowing external traffic to reach the service.
       # Maps port 443 on the host to port 443 on the container to enable HTTPS access.
     volumes: 
-      - wp_files:/var/www/inception/
+      - wp_files:/var/www/html/
       # "<host_path>:<container_path>"
       # Mounts the WordPress files to allow Nginx to serve the website.
     networks: 
