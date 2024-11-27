@@ -8,7 +8,7 @@ all: help
 
 build:
 	@echo $(GREEN)"Building the environment..."$(NC)
-	docker-compose -f $(COMPOSE_FILE) build
+	docker-compose -f $(COMPOSE_FILE) --build
 
 up:
 	@echo $(GREEN)"Starting the environment..."$(NC)
@@ -27,7 +27,7 @@ clean: down
 	docker network rm $(docker network ls -q)
 	@echo $(GREEN)"Docker clean done!"$(NC)
 
-re: clean build up
+re: down build up
 	@echo $(GREEN)"Rebuilding the project..."$(NC)
 
 status:
