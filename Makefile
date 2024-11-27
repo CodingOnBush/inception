@@ -28,7 +28,7 @@ down:
 
 clean:
 	@echo $(GREEN)"Cleaning the environment..."$(NC)
-	@docker compose -f $(COMPOSE) down --rmi all --volumes
+	@docker-compose -f $(COMPOSE) down --rmi all --volumes
 	@docker system prune -af
 
 re: clean init start
