@@ -7,7 +7,7 @@ services:
     networks: 
       - my_network
     init: true
-    env_file: env
+    env_file: .env
     restart: unless-stopped
 
   wordpress:
