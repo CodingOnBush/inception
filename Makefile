@@ -1,3 +1,5 @@
+include ./srcs/.env
+
 COMPOSE_FILE	:=	srcs/docker-compose.yml
 RED				:=	"\033[0;31m"
 GREEN			:=	"\033[0;32m"
@@ -6,28 +8,30 @@ NC				:=	"\033[0m"
 
 all: help
 
-build:
+init:
 	@echo $(GREEN)"Building the environment..."$(NC)
-	docker-compose -f $(COMPOSE_FILE) build
+	@mkdir -p /home/$(LOGIN)/data/database
+	@mkdir -p /home/$(LOGIN)/data/wp_files
+	docker-compose -f $(COMPOSE_FILE) up -d --build
 
-up:
+start:
 	@echo $(GREEN)"Starting the environment..."$(NC)
-	docker-compose -f $(COMPOSE_FILE) up -d
+	docker-compose -f $(COMPOSE_FILE) start
+
+stop:
+	@echo $(GREEN)"Stopping the environment..."$(NC)
+	docker-compose -f $(COMPOSE_FILE) stop
 
 down:
 	@echo $(GREEN)"Stopping the environment..."$(NC)
 	docker-compose -f $(COMPOSE_FILE) down
 
-clean: down
+clean:
 	@echo $(GREEN)"Cleaning the environment..."$(NC)
-	@docker stop $(docker ps -qa) 2> /dev/null
-	@docker rm $(docker ps -qa) 2> /dev/null
-	@docker rmi -f $(docker images -qa) 2> /dev/null
-	@docker volume rm $(docker volume ls -q) 2> /dev/null
-	@docker network rm $(docker network ls -q) 2> /dev/null
-	@echo $(GREEN)"Docker clean done!"$(NC)
+	@docker compose -f $(COMPOSE) down --rmi all --volumes
+	@docker system prune -af
 
-re: down build up
+re: clean init start
 	@echo $(GREEN)"Rebuilding the project..."$(NC)
 
 status:
@@ -37,11 +41,12 @@ status:
 help:
 	@echo $(YELLOW)"Usage :"$(NC)
 	@echo $(YELLOW)"  make...........: Display this help"$(NC)
-	@echo $(YELLOW)"  make build.....: Build the project"$(NC)
-	@echo $(YELLOW)"  make up........: Start the project"$(NC)
-	@echo $(YELLOW)"  make down......: Stop the project"$(NC)
-	@echo $(YELLOW)"  make clean.....: Stop and remove the project"$(NC)
-	@echo $(YELLOW)"  make re........: Rebuild the project"$(NC)
+	@echo $(YELLOW)"  make init......: Build the environment"$(NC)
+	@echo $(YELLOW)"  make start.....: Start the environment"$(NC)
+	@echo $(YELLOW)"  make stop......: Stop the environment"$(NC)
+	@echo $(YELLOW)"  make down......: Stop and remove the environment"$(NC)
+	@echo $(YELLOW)"  make clean.....: Remove all the containers and volumes"$(NC)
+	@echo $(YELLOW)"  make re........: Rebuild the environment"$(NC)
 	@echo $(YELLOW)"  make status....: Display the status of the containers"$(NC)
 
-.PHONY: all build up down clean re status help
+.PHONY: all init start stop down clean re status help
