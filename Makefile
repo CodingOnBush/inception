@@ -1,6 +1,9 @@
 include ./srcs/.env
 
+# Variables
 COMPOSE_FILE	:=	srcs/docker-compose.yml
+
+# Colors
 RED				:=	"\033[0;31m"
 GREEN			:=	"\033[0;32m"
 YELLOW			:=	"\033[0;33m"
@@ -30,6 +33,7 @@ clean:
 	@echo $(GREEN)"Cleaning the environment..."$(NC)
 	docker-compose -f $(COMPOSE_FILE) down --rmi all --volumes
 	docker system prune -af
+	rm -rf /home/$(LOGIN)/data
 
 re: clean init start
 	@echo $(GREEN)"Rebuilding the project..."$(NC)
