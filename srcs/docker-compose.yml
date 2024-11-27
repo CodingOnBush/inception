@@ -1,70 +1,70 @@
 services:
-	mariadb:
-		container_name: mariadb
-		build: ./requirements/mariadb/
-		volumes: 
-			- database:/var/lib/mysql/
-		networks: 
-			- my_network
-		init: true
-		env_file: env
-		restart: unless-stopped
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb/
+    volumes: 
+      - database:/var/lib/mysql/
+    networks: 
+      - my_network
+    init: true
+    env_file: env
+    restart: unless-stopped
 
-	wordpress:
-		container_name: wordpress
-		build: ./requirements/wordpress/
-		volumes: 
-			- wp_files:/var/www/inception/
-		networks: 
-			- my_network
-		init: true
-		env_file: .env
-		depends_on: 
-			- mariadb
-		restart: unless-stopped
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress/
+    volumes: 
+      - wp_files:/var/www/inception/
+    networks: 
+      - my_network
+    init: true
+    env_file: .env
+    depends_on: 
+      - mariadb
+    restart: unless-stopped
 
-	nginx:
-		container_name: nginx
-		build: ./requirements/nginx/
-		ports: 
-			- "443:443"
-			# "<host_port>:<container_port>"
-			# Exposes the container's port to the host, allowing external traffic to reach the service.
-			# Maps port 443 on the host to port 443 on the container to enable HTTPS access.
-		volumes: 
-			- wp_files:/var/www/inception/
-			# "<host_path>:<container_path>"
-			# Mounts the WordPress files to allow Nginx to serve the website.
-		networks: 
-			- my_network
-		init: true
-			# Ensures that the container runs initialization scripts before starting the main process.
-		env_file: .env
-			# Specifies the environment file to use for the container.
-		depends_on: 
-			- wordpress
-			# Specifies the dependencies for starting this container.
-		restart: unless-stopped
-			# Restarts the container automatically if it fails. (https://github.com/compose-spec/compose-spec/blob/main/spec.md#restart)
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx/
+    ports: 
+      - "443:443"
+      # "<host_port>:<container_port>"
+      # Exposes the container's port to the host, allowing external traffic to reach the service.
+      # Maps port 443 on the host to port 443 on the container to enable HTTPS access.
+    volumes: 
+      - wp_files:/var/www/inception/
+      # "<host_path>:<container_path>"
+      # Mounts the WordPress files to allow Nginx to serve the website.
+    networks: 
+      - my_network
+    init: true
+      # Ensures that the container runs initialization scripts before starting the main process.
+    env_file: .env
+      # Specifies the environment file to use for the container.
+    depends_on: 
+      - wordpress
+      # Specifies the dependencies for starting this container.
+    restart: unless-stopped
+      # Restarts the container automatically if it fails. (https://github.com/compose-spec/compose-spec/blob/main/spec.md#restart)
 
 volumes:
-	database:
-		driver: local
-		driver_opts:
-			type: none
-			o: bind
-			device: ~/data/database
-			# Volume for MariaDB data storage
-	wp_files:
-		driver: local
-		driver_opts:
-			type: none
-			o: bind
-			device: ~/data/wp_files
-			# Volume for WordPress files
-		# Volumes for persisting data across container restarts bound to host directories.
+  database:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ~/data/database
+      # Volume for MariaDB data storage
+  wp_files:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ~/data/wp_files
+      # Volume for WordPress files
+    # Volumes for persisting data across container restarts bound to host directories.
 
 networks:
-	my_network:
-		driver: bridge
-		# A custom bridge network for communication between containers.
+  my_network:
+    driver: bridge
+    # A custom bridge network for communication between containers.
