@@ -1,15 +1,11 @@
-FROM	debian:bullseye
+FROM debian:buster
 
-EXPOSE	3306
+RUN apt-get update \
+    && apt-get install -y mariadb-server
 
-RUN		apt-get update && \
-		apt-get install -y --no-install-recommends --no-install-suggests \
-		mariadb-server && \
-		rm -rf /var/lib/apt/lists/*
-
-COPY	conf/50-server.cnf /etc/mysql/mariadb.conf.d/
-
-COPY	tools/setup_db.sh /bin/
-RUN		chmod +x /bin/setup_db.sh
-
-CMD		["setup_db.sh", "mysqld_safe"]
+COPY ./conf/my.cnf /etc/mysql/mariadb.conf.d/my.cnf
+COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
+RUN echo "socket=/var/run/mysqld/mysqld.sock" >> /etc/mysql/my.cnf
+COPY ./tools/db.sh /
+RUN chmod +x /db.sh
+CMD ["/db.sh"]

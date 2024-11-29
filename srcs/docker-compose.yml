@@ -1,63 +1,57 @@
-services:
-  #---------------------------------------------------
-  mariadb:
-    container_name: mariadb
-    build: ./requirements/mariadb/
-    volumes:
-      - database:/var/lib/mysql/
-    networks:
-      - my_network
-    init: true
-    env_file:
-      - .env
-    restart: always
-  #---------------------------------------------------
-  wordpress:
-    container_name: wordpress
-    build: ./requirements/wordpress/
-    volumes:
-      - wp_files:/var/www/inception/
-    networks:
-      - my_network
-    init: true
-    env_file:
-      - .env
-    depends_on:
-      - mariadb
-    restart: always
-  #---------------------------------------------------
-  nginx:
-    container_name: nginx
-    build:
-      context: ./requirements/nginx/
-    ports:
-      - '443:443'
-    volumes:
-      - wp_files:/var/www/inception/
-    networks:
-      - my_network
-    init: true
-    env_file:
-      - .env
-    depends_on:
-      - wordpress
-    restart: always
-  #---------------------------------------------------
+version: '3.3'
 
-volumes:
-  database:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ~/data/database
-  wp_files:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ~/data/wp_files
+services:
+    nginx:
+      build: ./requirements/Nginx
+      container_name: nginx
+      image: nginx
+      ports:
+        - 443:443
+      volumes:
+        - wp:/var/www/html
+      networks:
+        - inception
+      depends_on:
+        - wordpress
+
+    wordpress:
+      build: ./requirements/Wordpress
+      container_name: wordpress
+      image: wordpress
+      restart: always
+      volumes:
+        - wp:/var/www/html
+      networks:
+        - inception
+      env_file:
+        - .env
+      depends_on:
+        - mariadb
+        
+    mariadb:
+      build: ./requirements/MariaDB
+      container_name: mariadb
+      image: mariadb
+      restart: always
+      volumes:
+        - db:/var/lib/mysql
+      networks:
+        - inception
+      env_file:
+        - .env
 
 networks:
-  my_network:
-    driver: bridge
+  inception:
+volumes:
+  wp:
+    driver: local
+    driver_opts:
+       type: bind
+       o: bind
+       device: /Users/allblue/data/wordpress
+  db:
+     driver: local
+     driver_opts:
+       type: bind
+       o: bind
+       device: /Users/allblue/data/mariadb

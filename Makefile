@@ -1,42 +1,39 @@
-DOCKER_COMPOSE	:=	docker-compose -f srcs/docker-compose.yml
-START_SCRIPT	:=	./srcs/tools/start.sh
-CLEAN_SCRIPT	:=	./srcs/tools/clean.sh
+# Set the project directory where the docker-compose.yml file resides.
+PROJECT_DIR := srcs
 
-RED		:=	"\033[0;31m"
-GREEN	:=	"\033[0;32m"
-YELLOW	:=	"\033[0;33m"
-NC		:=	"\033[0m"
+all:
+	cd $(PROJECT_DIR) && docker-compose up --build
 
-all: start
+# Target: up
+# Start the Docker containers without rebuilding them.
+up:
+	cd $(PROJECT_DIR) && docker-compose up
 
-start:
-	@echo $(GREEN)"Starting the environment..."$(NC)
-	@$(START_SCRIPT)
+# Target: down
+# Stop and remove the Docker containers.
+down:
+	cd $(PROJECT_DIR) && docker-compose down
 
-stop:
-	@echo $(RED)"Stopping the environment..."$(NC)
-	@$(DOCKER_COMPOSE) down
+# Target: delete
+# Remove unused Docker resources (images, containers, volumes, networks).
+delete:
+	cd $(PROJECT_DIR) && docker system prune -a
 
-clean:
-	@echo $(YELLOW)"Cleaning the environment..."$(NC)
-	@$(CLEAN_SCRIPT)
-
-re:
-	@echo $(YELLOW)"Rebuilding the project..."$(NC)
-	@make clean
-	@make start
-
-status:
-	@echo $(YELLOW)"Status of the containers..."$(NC)
-	@docker ps
-
-help:
-	@echo $(YELLOW)"Usage :"$(NC)
-	@echo $(YELLOW)"  make start    -> Start all the containers"$(NC)
-	@echo $(YELLOW)"  make stop     -> Stop all the containers"$(NC)
-	@echo $(YELLOW)"  make clean    -> Clean the environment"$(NC)
-	@echo $(YELLOW)"  make re       -> Rebuid the project"$(NC)
-	@echo $(YELLOW)"  make status   -> Display the status of the containers"$(NC)
-	@echo $(YELLOW)"  tips : docker exec -it <containerID> /bin/bash"$(NC)
-
-.PHONY: all start stop clean re status help
+# Target: rm_volumes
+# Remove all Docker volumes and associated containers.
+rm_volumes:
+	docker ps -aq | xargs -r docker rm -fv
+	docker volume ls -q | xargs -r docker volume rm
+# Target: rm_data
+# Remove data directories used by the application.
+rm_data:
+	rm -rf /Users/allblue/data/wordpress/* && rm -rf /Users/allblue/data/mariadb/*
+# Target: clean_all
+# Stop and remove all Docker containers, volumes, networks, and images (both used and unused).
+clean_all:
+	cd $(PROJECT_DIR) && docker-compose down --volumes --remove-orphans
+	docker network prune -f
+	docker system prune -af --volumes
+	docker container prune -f
+	docker volume prune -f
+	docker image prune -af
