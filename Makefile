@@ -3,7 +3,7 @@
 PROJECT_DIR := ./srcs
 
 all:
-	cd $(PROJECT_DIR) && docker-compose up -d --build
+	cd $(PROJECT_DIR) && docker-compose up --build
 
 # Target: up
 # Start the Docker containers without rebuilding them.

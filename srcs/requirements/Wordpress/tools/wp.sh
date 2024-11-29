@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+
 ### No clear_env to keep environment variables
 sed -i 's/;clear_env = no/clear_env = no/' /etc/php/7.3/fpm/pool.d/www.conf
 
