@@ -41,3 +41,6 @@ clean_all:
 
 
 re: clean_all all
+	@sleep 2
+	@docker ps -a
+	@echo "Rebuild complete."

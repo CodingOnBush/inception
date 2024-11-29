@@ -19,34 +19,34 @@ fi
 # Check if WordPress is already installed
 if ! wp core is-installed --allow-root; then
     wp core download --allow-root
-
-    # Generate wp-config.php file
-    if [ ! -f /var/www/html/wordpress/wp-config.php ]; then
-        wp config create --dbname=$DB_NAME \
-            --dbuser=$DB_USER \
-            --dbpass=$DB_PASS \
-            --dbhost=$DB_HOST \
-            --path=/var/www/html/wordpress --allow-root
-    fi
-
-    # Install WordPress
-    wp core install \
-        --url=$DOMAIN_NAME \
-        --title=$SITE_TITLE \
-        --admin_user=$ADMIN_USER \
-        --admin_password=$ADMIN_PASS \
-        --admin_email=$ADMIN_EMAIL \
-        --path=/var/www/html/wordpress \
-        --allow-root
-
-    # create a new user
-    wp user create \
-        $USER $EMAIL \
-        --role=author \
-        --allow-root
 else
     echo "WordPress is already installed."
 fi
+
+# Generate wp-config.php file
+if [ ! -f /var/www/html/wordpress/wp-config.php ]; then
+    wp config create --dbname=$DB_NAME \
+        --dbuser=$DB_USER \
+        --dbpass=$DB_PASS \
+        --dbhost=$DB_HOST \
+        --path=/var/www/html/wordpress --allow-root
+fi
+
+# Install WordPress
+wp core install \
+    --url=$DOMAIN_NAME \
+    --title=$SITE_TITLE \
+    --admin_user=$ADMIN_USER \
+    --admin_password=$ADMIN_PASS \
+    --admin_email=$ADMIN_EMAIL \
+    --path=/var/www/html/wordpress \
+    --allow-root
+
+# create a new user
+wp user create \
+    $USER $EMAIL \
+    --role=author \
+    --allow-root
 
 if [ -f /var/www/html/wordpress/wp-config.php ]; then
     echo "Enabling debug mode."
