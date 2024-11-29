@@ -48,10 +48,10 @@ volumes:
     driver_opts:
        type: bind
        o: bind
-       device: /Users/allblue/data/wordpress
+       device: /home/mos/data/wordpress
   db:
      driver: local
      driver_opts:
        type: bind
        o: bind
-       device: /Users/allblue/data/mariadb
+       device: /home/mos/data/mariadb

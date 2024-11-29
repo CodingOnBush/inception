@@ -1,5 +1,6 @@
+
 # Set the project directory where the docker-compose.yml file resides.
-PROJECT_DIR := srcs
+PROJECT_DIR := ./srcs
 
 all:
 	cd $(PROJECT_DIR) && docker-compose up --build
@@ -27,7 +28,7 @@ rm_volumes:
 # Target: rm_data
 # Remove data directories used by the application.
 rm_data:
-	rm -rf /Users/allblue/data/wordpress/* && rm -rf /Users/allblue/data/mariadb/*
+	rm -rf /home/mos/data/wordpress/* && rm -rf /home/mos/data/mariadb/*
 # Target: clean_all
 # Stop and remove all Docker containers, volumes, networks, and images (both used and unused).
 clean_all:
