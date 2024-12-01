@@ -2,15 +2,6 @@
 
 service mariadb start
 
-# timeout=30
-# while [ ! -e /run/mysqld/mysqld.sock ]; do
-#     if [ $timeout -eq 0 ]; then
-#         echo "Failed to run MariaDB"
-#         exit 1
-#     fi
-#     timeout=$(($timeout - 1))
-#     sleep 1
-# done
 sleep 10
 
 if [ ! -e /run/mysqld/mysqld.pid ]; then
@@ -28,7 +19,6 @@ echo "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('${DB_ROOT_PASS}');" >> /tm
 echo "FLUSH PRIVILEGES;" >> /tmp/database.sql
 
 mysql < /tmp/database.sql
-echo "Hey! I'm done"
 rm -f /tmp/database.sql
 
 sleep 5

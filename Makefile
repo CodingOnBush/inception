@@ -6,7 +6,7 @@ build:
 	$(CMD) build
 
 up:
-	$(CMD) up -d
+	$(CMD) up
 
 stop:
 	$(CMD) stop
