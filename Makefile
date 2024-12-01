@@ -1,24 +1,30 @@
 
 # Set the project directory where the docker-compose.yml file resides.
-PROJECT_DIR := ./srcs
+CMD = docker-compose -f ./srcs/docker-compose.yml
 
-all:
-	cd $(PROJECT_DIR) && docker-compose up --build
+all: build up
+
+build:
+	$(CMD) up --build
 
 # Target: up
 # Start the Docker containers without rebuilding them.
 up:
-	cd $(PROJECT_DIR) && docker-compose up
+	$(CMD) up
 
 # Target: down
 # Stop and remove the Docker containers.
 down:
-	cd $(PROJECT_DIR) && docker-compose down
+	$(CMD) down
 
 # Target: delete
 # Remove unused Docker resources (images, containers, volumes, networks).
 delete:
-	cd $(PROJECT_DIR) && docker system prune -a
+	docker system prune -a
+
+init:
+	@echo "Creating data directories..."
+	mkdir -p /home/mos/data/wp && mkdir -p /home/mos/data/db
 
 # Target: rm_volumes
 # Remove all Docker volumes and associated containers.
@@ -28,19 +34,29 @@ rm_volumes:
 # Target: rm_data
 # Remove data directories used by the application.
 rm_data:
-	rm -rf /home/mos/data/wordpress/* && rm -rf /home/mos/data/mariadb/*
+	rm -rf /home/mos/data/wp/* && rm -rf /home/mos/data/db/*
 # Target: clean_all
 # Stop and remove all Docker containers, volumes, networks, and images (both used and unused).
 clean_all:
-	cd $(PROJECT_DIR) && docker-compose down --volumes --remove-orphans
+	$(CMD) down --volumes --remove-orphans
 	docker network prune -f
 	docker system prune -af --volumes
 	docker container prune -f
 	docker volume prune -f
 	docker image prune -af
 
-
-re: clean_all all
-	@sleep 2
-	@docker ps -a
-	@echo "Rebuild complete."
+help:
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Targets:"
+	@echo "  all          Build and start the Docker containers."
+	@echo "  build        Build the Docker containers."
+	@echo "  up           Start the Docker containers."
+	@echo "  down         Stop and remove the Docker containers."
+	@echo "  delete       Remove unused Docker resources (images, containers, volumes, networks)."
+	@echo "  init         Create data directories."
+	@echo "  rm_volumes   Remove all Docker volumes and associated containers."
+	@echo "  rm_data      Remove data directories used by the application."
+	@echo "  clean_all    Stop and remove all Docker containers, volumes, networks, and images (both used and unused)."
+	@echo "  help         Display this help message."
+	@echo ""
