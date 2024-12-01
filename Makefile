@@ -45,6 +45,8 @@ clean_all:
 	docker volume prune -f
 	docker image prune -af
 
+re: down rm_volumes rm_data clean_all init all
+
 help:
 	@echo "Usage: make [target]"
 	@echo ""

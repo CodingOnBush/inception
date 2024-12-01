@@ -1,29 +1,32 @@
-#using debian buster image
+# Using Debian Bullseye image
 FROM debian:bullseye
 
+# Expose HTTPS port
 EXPOSE 443
+
+# Set environment variable to run non-interactive installations
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install Nginx and OpenSSL
 RUN apt-get update -y \
-    && apt-get install -y nginx openssl \
-    && apt-get clean
+    && apt-get install -y --no-install-recommends nginx openssl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-#we need to setup the nginx conf
-RUN rm -f /etc/nginx/nginx.conf
-
+# Copy custom Nginx configuration
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 
-#we need to create the TLS certificate
+# Create directory for SSL certificates
 RUN mkdir -p /etc/nginx/ssl
 
-#we create a self-signed certificate that doesn't ned a password
+# Create a self-signed TLS certificate without password
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /etc/nginx/ssl/inception.key \
     -out /etc/nginx/ssl/inception.crt \
-    -subj "/CN=mos.42.fr"
-    # -subj "/C=${SSL_COUNTRY}/ST=${SSL_STATE}/L=${SSL_LOCALITY}/O=${SSL_ORGANIZATION}/OU=${SSL_ORG_UNIT}/CN=${SSL_COMMON_NAME}/UID=${SSL_UID}"
+    -subj "/CN=momrane.42.fr"
 
+# Change ownership of web directory to Nginx user
 RUN chown -R www-data:www-data /var/www/html
 
-#starts the NGINX server amd ensures it runs in the foreground
+# Ensure Nginx runs in the foreground
 CMD ["nginx", "-g", "daemon off;"]

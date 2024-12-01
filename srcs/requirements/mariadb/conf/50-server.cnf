@@ -1,9 +1,22 @@
 [mysqld]
+
+### [User that runs the MariaDB service]
 user = root
+
+### [Directory where the database files are stored]
 datadir = /var/lib/mysql
+
+### [File that stores the process ID of the MariaDB server]
 pid-file = /run/mysqld/mysqld.pid
-socket  = /run/mysqld/mysqld.sock
-bind_address= 0.0.0.0
+
+### [File that serves as a communication endpoint for local connections]
+socket = /run/mysqld/mysqld.sock
+
+### [Bind address to allow connections from any IP address (0.0.0.0)]
+bind_address = 0.0.0.0
+
+### [Port number that MariaDB server listens on]
 port = 3306
-# Store error log
-log-error=error.log
+
+### [Log file to store error messages from MariaDB]
+log-error = error.log
