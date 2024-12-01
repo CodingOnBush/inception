@@ -12,7 +12,7 @@ RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     ca-certificates \
-    wget \
+    curl \
     php7.4 \
     php7.4-fpm \
     php7.4-mysql \

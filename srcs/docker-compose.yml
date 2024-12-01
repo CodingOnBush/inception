@@ -5,13 +5,13 @@ services:
     env_file:
       - .env
     volumes:
-      - db:/var/lib/mysql
+      - db:/var/lib/mysql  # Store database files persistently to retain data across container restarts
     networks:
       - egghead
-    restart: always
+    restart: on-failure
     expose:
-      - "3306"
-    init: true
+      - "3306"  # Allow other services to communicate with MariaDB internally on port 3306
+    init: true  # Ensure proper handling of zombie processes
 
   wordpress:
     container_name: wordpress
@@ -19,46 +19,50 @@ services:
     env_file:
       - .env
     volumes:
-      - wp:/var/www/html
+      - wp:/var/www/html  # Persist WordPress files to retain changes and uploads
     networks:
       - egghead
     depends_on:
-      - mariadb
-    restart: always
+      - mariadb  # Ensure that the database is up and running before starting WordPress
+    restart: on-failure
     expose:
-      - "9000"
+      - "9000"  # Allow Nginx to communicate with PHP-FPM internally on port 9000
     init: true
 
   nginx:
     container_name: nginx
     build: ./requirements/nginx
-    env_file: 
+    env_file:
       - .env
     depends_on:
-      - wordpress
+      - wordpress  # Ensure that WordPress is ready before starting Nginx to avoid 502 errors
     ports:
-      - 443:443
+      - "443:443"  # Expose port 443 to make the service accessible via HTTPS
     volumes:
-      - wp:/var/www/html
+      - wp:/var/www/html  # Serve the WordPress files through Nginx
     networks:
       - egghead
-    restart: always
+    restart: on-failure
     init: true
 
+# Named volumes configuration
 volumes:
   wp:
     driver: local
     driver_opts:
       type: none
-      device: /home/mos/data/wp
+      device: /home/mos/data/wp  # Use host path to store WordPress files, enabling data persistence
       o: bind
-  db: 
+  db:
     driver: local
     driver_opts:
       type: none
-      device: /home/mos/data/db
+      device: /home/mos/data/db  # Use host path to store MariaDB data, enabling data persistence
       o: bind
 
+# Network configuration
 networks:
   egghead:
     driver: bridge
+# Basic bridge network for simple and isolated inter-container communication, 
+# providing a straightforward and reliable way to connect the services

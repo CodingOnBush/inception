@@ -8,7 +8,7 @@ timeout=30
 while [ ! -e /run/mysqld/mysqld.sock ]; do
     timeout=$(($timeout - 1))
     if [ $timeout -eq 0 ]; then
-        echo "Failed to run MariaDB"
+        echo "[MARIADB] Failed to run MariaDB"
         exit 1
     fi
     sleep 1
@@ -16,7 +16,7 @@ done
 
 # Wait for the MariaDB pid file to be available
 if [ ! -e /run/mysqld/mysqld.pid ]; then
-    echo "Failed to run MariaDB"
+    echo "[MARIADB] Failed to run MariaDB"
     exit 1
 fi
 
