@@ -1,42 +1,33 @@
-
-# Set the project directory where the docker-compose.yml file resides.
 CMD = docker-compose -f ./srcs/docker-compose.yml
 
 all: build up
 
 build:
-	$(CMD) up --build
+	$(CMD) build
 
-# Target: up
-# Start the Docker containers without rebuilding them.
 up:
-	$(CMD) up
+	$(CMD) up -d
 
-# Target: down
-# Stop and remove the Docker containers.
+stop:
+	$(CMD) stop
+
 down:
 	$(CMD) down
 
-# Target: delete
-# Remove unused Docker resources (images, containers, volumes, networks).
 delete:
 	docker system prune -a
 
 init:
 	@echo "Creating data directories..."
-	mkdir -p /home/mos/data/wp && mkdir -p /home/mos/data/db
+	mkdir -p /home/momrane/data/wp && mkdir -p /home/momrane/data/db
 
-# Target: rm_volumes
-# Remove all Docker volumes and associated containers.
-rm_volumes:
+remove_all_volumes:
 	docker ps -aq | xargs -r docker rm -fv
 	docker volume ls -q | xargs -r docker volume rm
-# Target: rm_data
-# Remove data directories used by the application.
-rm_data:
-	rm -rf /home/mos/data/wp/* && rm -rf /home/mos/data/db/*
-# Target: clean_all
-# Stop and remove all Docker containers, volumes, networks, and images (both used and unused).
+
+remove_all_data:
+	rm -rf /home/momrane/data/wp/* && rm -rf /home/momrane/data/db/*
+
 clean_all:
 	$(CMD) down --volumes --remove-orphans
 	docker network prune -f
@@ -49,14 +40,15 @@ help:
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Targets:"
-	@echo "  all          Build and start the Docker containers."
-	@echo "  build        Build the Docker containers."
-	@echo "  up           Start the Docker containers."
-	@echo "  down         Stop and remove the Docker containers."
-	@echo "  delete       Remove unused Docker resources (images, containers, volumes, networks)."
-	@echo "  init         Create data directories."
-	@echo "  rm_volumes   Remove all Docker volumes and associated containers."
-	@echo "  rm_data      Remove data directories used by the application."
-	@echo "  clean_all    Stop and remove all Docker containers, volumes, networks, and images (both used and unused)."
-	@echo "  help         Display this help message."
+	@echo "  all        - Build and start the containers"
+	@echo "  build      - Build the containers"
+	@echo "  up         - Start the containers"
+	@echo "  stop       - Stop the containers"
+	@echo "  down       - Stop and remove the containers"
+	@echo "  delete     - Remove all unused containers, networks, images, and volumes"
+	@echo "  init       - Create data directories"
+	@echo "  remove_all_volumes - Remove all volumes"
+	@echo "  remove_all_data    - Remove all data"
+	@echo "  clean_all  - Stop and remove all containers, networks, images, and volumes"
+	@echo "  help       - Display this help message"
 	@echo ""

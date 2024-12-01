@@ -1,5 +1,4 @@
-#all the services we'll work with
-# name: Inception
+version: '3.8'
 
 services:
   mariadb:
@@ -10,7 +9,7 @@ services:
     volumes:
       - db:/var/lib/mysql
     networks:
-      - inception
+      - egghead
     restart: always
     expose:
       - "3306"
@@ -23,7 +22,7 @@ services:
     volumes:
       - wp:/var/www/html
     networks:
-      - inception
+      - egghead
     depends_on:
       - mariadb
     restart: always
@@ -42,7 +41,7 @@ services:
     volumes:
       - wp:/var/www/html
     networks:
-      - inception
+      - egghead
     restart: always
 
 volumes:
@@ -50,15 +49,15 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/mos/data/wp
+      device: /home/momrane/data/wp
       o: bind
   db: 
     driver: local
     driver_opts:
       type: none
-      device: /home/mos/data/db
+      device: /home/momrane/data/db
       o: bind
 
 networks:
-  inception:
+  egghead:
     driver: bridge

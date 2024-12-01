@@ -1,4 +1,3 @@
-#base image
 FROM debian:bullseye
 
 EXPOSE 9000
@@ -17,30 +16,12 @@ RUN apt-get update &&\
 
 RUN mkdir -p /run/php
 
-#we make the launching script executable in all cases
 COPY ./tools/wp.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/wp.sh
 
 RUN mkdir -p /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 
+COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
+
 ENTRYPOINT [ "wp.sh" ]
-
-# FROM debian:buster
-
-# RUN apt-get update \
-#     && apt-get install -y \
-#     php-fpm \
-#     php-mbstring \
-#     php-mysql \
-#     php-phar curl \
-#     mariadb-client \
-#     sendmail
-
-# RUN mkdir -p /var/www/html /run/php
-
-# COPY ./tools/wp.sh /
-
-# RUN chmod +x /wp.sh
-
-# CMD ["sh", "/wp.sh"]

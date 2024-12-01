@@ -8,11 +8,9 @@ RUN apt-get update &&\
     mariadb-server &&\
     rm -rf /var/lib/apt/lists/*
 
-#config file for mariadb specifically
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 
-#setup mariadb via script
 COPY ./tools/db.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/db.sh
 
-CMD [ "db.sh", "mysqld" ]
+CMD [ "db.sh"]
