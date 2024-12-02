@@ -1,6 +1,6 @@
 CMD = docker-compose -f ./srcs/docker-compose.yml
 
-all: build up
+all: help
 
 build:
 	$(CMD) build
@@ -18,15 +18,15 @@ delete:
 	docker system prune -a
 
 init:
-	@echo "Creating data directories..."
 	mkdir -p /home/momrane/data/wp && mkdir -p /home/momrane/data/db
 
-remove_all_volumes:
-	docker ps -aq | xargs -r docker rm -fv
-	docker volume ls -q | xargs -r docker volume rm
+rmvolu:
+	docker volume rm srcs_db
+	docker volume rm srcs_wp
 
-remove_all_data:
-	rm -rf /home/momrane/data/wp/* && rm -rf /home/momrane/data/db/*
+rmdata:
+	rm -rf /home/momrane/data/wp/*
+	rm -rf /home/momrane/data/db/*
 
 clean_all:
 	$(CMD) down --volumes --remove-orphans

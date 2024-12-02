@@ -2,7 +2,7 @@
 
 service mariadb start
 
-sleep 10
+sleep 7
 
 if [ ! -e /run/mysqld/mysqld.pid ]; then
     echo "Failed to run MariaDB"
@@ -24,4 +24,5 @@ rm -f /tmp/database.sql
 sleep 5
 service mariadb stop
 
+echo "MariaDB is ready to use"
 mysqld
